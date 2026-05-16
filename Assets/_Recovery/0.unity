@@ -667,6 +667,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f45e0f27bb458664893ee19fa634ffc3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCameraController
+  mouseSensitivity: 2
 --- !u!114 &636788489
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1446,7 +1447,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3453d0bd2649a3d4cb3d446f6e283ebf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
-  speed: 20
+  speed: 10
   mouseSensitivity: 0.08
 --- !u!1 &1596799348
 GameObject:

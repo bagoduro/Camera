@@ -1,51 +1,84 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(Rigidbody))]
 public class PlayerController : MonoBehaviour
 {
-    public float speed = 5f;
+    public float speed = 6f;
+    public float mouseSensitivity = 0.08f;
 
     private Rigidbody rb;
+
+    private float yaw;
+
+    private Vector3 moveInput;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
+        rb.interpolation = RigidbodyInterpolation.Interpolate;
+
+        yaw = transform.eulerAngles.y;
     }
 
     void Update()
     {
-        float moveHorizontal = 0f;
-        float moveVertical = 0f;
+        RotatePlayer();
+        ReadInput();
+    }
 
-        // Verifica as teclas pressionadas usando o novo Input System
-        if (Keyboard.current.aKey.isPressed) moveHorizontal = -1f;
-        if (Keyboard.current.dKey.isPressed) moveHorizontal = 1f;
+    void FixedUpdate()
+    {
+        MovePlayer();
+    }
 
-        if (Keyboard.current.sKey.isPressed) moveVertical = -1f;
-        if (Keyboard.current.wKey.isPressed) moveVertical = 1f;
+    void RotatePlayer()
+    {
+        if (Mouse.current == null) return;
 
-        // Cria o vetor de movimento (X, Y, Z)
-        // Mantemos o Y como 0.0f para o player não "voar" ao andar
-        Vector3 movement = new Vector3(moveHorizontal, 0.0f, moveVertical);
+        float mouseX =
+            Mouse.current.delta.x.ReadValue()
+            * mouseSensitivity;
 
-        /*
-         * ALTERAÇÃO REALIZADA:
-         * O método de movimentação foi modificado de transform.Translate para Rigidbody.MovePosition.
-         *
-         * JUSTIFICATIVA:
-         * O uso de transform.Translate move o objeto diretamente através de sua transformação,
-         * sem considerar o sistema de física da Unity. Isso pode causar problemas como o player
-         * atravessar paredes, ignorar colisões ou apresentar comportamentos inconsistentes
-         * quando interage com outros objetos que possuem Collider.
-         *
-         * Ao utilizar o Rigidbody.MovePosition, o movimento passa a ser tratado pelo sistema
-         * de física da engine, garantindo que colisões sejam respeitadas corretamente.
-         * Dessa forma, o player não atravessa objetos e o comportamento se torna mais realista
-         * e adequado às boas práticas de desenvolvimento na Unity.
-         *
-         * Essa alteração também melhora a estabilidade do movimento em diferentes taxas de
-         * frames (FPS), tornando o jogo mais consistente independentemente do desempenho da máquina.
-         */
-        rb.MovePosition(rb.position + movement * speed * Time.deltaTime);
+        yaw += mouseX;
+
+        transform.rotation =
+            Quaternion.Euler(0f, yaw, 0f);
+    }
+
+    void ReadInput()
+    {
+        moveInput = Vector3.zero;
+
+        if (Keyboard.current.wKey.isPressed)
+            moveInput += Vector3.forward;
+
+        if (Keyboard.current.sKey.isPressed)
+            moveInput += Vector3.back;
+
+        if (Keyboard.current.aKey.isPressed)
+            moveInput += Vector3.left;
+
+        if (Keyboard.current.dKey.isPressed)
+            moveInput += Vector3.right;
+
+        moveInput.Normalize();
+    }
+
+    void MovePlayer()
+    {
+        Vector3 direction =
+            transform.TransformDirection(moveInput);
+
+        Vector3 velocity =
+            direction * speed;
+
+        velocity.y = rb.linearVelocity.y;
+
+        rb.linearVelocity = velocity;
     }
 }
