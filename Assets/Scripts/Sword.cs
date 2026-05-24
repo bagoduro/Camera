@@ -14,14 +14,13 @@ public class Sword : MonoBehaviour
     {
         if (animator != null)
         {
-            animator.Play("Swing");
+            animator.Play("AnimacaoFaca 0"); 
         }
     }
 
     private void OnTriggerEnter(Collider collision)
     {
         Debug.Log("Collidiu com " + collision.gameObject.name);
-
         EnemyStatus enemy = collision.gameObject.GetComponent<EnemyStatus>();
         if (enemy != null)
         {

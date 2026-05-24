@@ -6,7 +6,7 @@ public class PlayerAttack : MonoBehaviour
     public float cooldown = 2f;
     private float timer;
     private bool canAttack = true;
-    public Sword sword;
+    public Sword sword;  // Referência para o script Sword
 
     void Start()
     {
@@ -26,7 +26,8 @@ public class PlayerAttack : MonoBehaviour
             }
         }
 
-        if (Keyboard.current.spaceKey.wasPressedThisFrame && canAttack)
+        // Ataca com clique esquerdo do mouse
+        if (Mouse.current.leftButton.wasPressedThisFrame && canAttack)
         {
             Attack();
         }
@@ -35,7 +36,8 @@ public class PlayerAttack : MonoBehaviour
     void Attack()
     {
         canAttack = false;
-        sword.Attack();
+        if (sword != null)
+            sword.Attack();
         Debug.Log("Attack performed!");
     }
 }
