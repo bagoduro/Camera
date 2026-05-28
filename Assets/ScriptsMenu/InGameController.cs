@@ -12,11 +12,12 @@ public class InGameController : MonoBehaviour
     public Button botaoContinuar;
 
     [Header("UI HUD")]
-    public GameObject healthBarUI;   // Barra de vida (HealthSlider)
-    public GameObject staminaBarUI;  // Barra de stamina (boostSlider do powerup)
+    public GameObject healthBarUI;      // Barra de vida (HealthSlider)
+    public GameObject staminaBarUI;     // Barra de stamina (boostSlider do powerup)
+    public GameObject queijoCounterUI;  // NOVO: texto do contador de queijos
 
     private bool isPaused = false;
-    private bool staminaWasActive;   // Guarda o estado da stamina antes do pause
+    private bool staminaWasActive;      // Guarda o estado da stamina antes do pause
 
     void Start()
     {
@@ -75,6 +76,10 @@ public class InGameController : MonoBehaviour
             staminaBarUI.SetActive(false);
         }
 
+        // NOVO: esconde o contador de queijos
+        if (queijoCounterUI != null)
+            queijoCounterUI.SetActive(false);
+
         UnlockCursor();
     }
 
@@ -93,6 +98,10 @@ public class InGameController : MonoBehaviour
         // Restaura a barra de stamina para o estado que tinha antes do pause
         if (staminaBarUI != null)
             staminaBarUI.SetActive(staminaWasActive);
+
+        // NOVO: mostra o contador de queijos novamente
+        if (queijoCounterUI != null)
+            queijoCounterUI.SetActive(true);
 
         LockCursor();
 
