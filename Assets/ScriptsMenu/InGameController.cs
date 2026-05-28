@@ -16,6 +16,7 @@ public class InGameController : MonoBehaviour
     public GameObject staminaBarUI;  // Barra de stamina (boostSlider do powerup)
 
     private bool isPaused = false;
+    private bool staminaWasActive;   // Guarda o estado da stamina antes do pause
 
     void Start()
     {
@@ -63,13 +64,16 @@ public class InGameController : MonoBehaviour
 
         pauseMenu.SetActive(true);
 
-        // Esconde a barra de vida
+        // Esconde a barra de vida (sempre some no pause)
         if (healthBarUI != null)
             healthBarUI.SetActive(false);
 
-        // Esconde a barra de stamina
+        // Salva o estado atual da barra de stamina e depois esconde
         if (staminaBarUI != null)
+        {
+            staminaWasActive = staminaBarUI.activeSelf;
             staminaBarUI.SetActive(false);
+        }
 
         UnlockCursor();
     }
@@ -82,13 +86,13 @@ public class InGameController : MonoBehaviour
 
         pauseMenu.SetActive(false);
 
-        // Mostra a barra de vida novamente
+        // Mostra a barra de vida novamente (sempre volta)
         if (healthBarUI != null)
             healthBarUI.SetActive(true);
 
-        // Mostra a barra de stamina novamente
+        // Restaura a barra de stamina para o estado que tinha antes do pause
         if (staminaBarUI != null)
-            staminaBarUI.SetActive(true);
+            staminaBarUI.SetActive(staminaWasActive);
 
         LockCursor();
 
