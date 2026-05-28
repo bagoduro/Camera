@@ -7,7 +7,7 @@ public class EnemyStatus : MonoBehaviour
     public void TakeDamage(float damage)
     {
         life -= damage;
-        Debug.Log("Enemy took " + damage + " damage. Remaining life: " + life);
+        Debug.Log("Inimigo levou " + damage + " de dano. Vida restante: " + life);
 
         if (life <= 0)
         {

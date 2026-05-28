@@ -11,6 +11,10 @@ public class InGameController : MonoBehaviour
     [Header("Botão Continuar")]
     public Button botaoContinuar;
 
+    [Header("UI HUD")]
+    public GameObject healthBarUI;   // Barra de vida (HealthSlider)
+    public GameObject staminaBarUI;  // Barra de stamina (boostSlider do powerup)
+
     private bool isPaused = false;
 
     void Start()
@@ -59,6 +63,14 @@ public class InGameController : MonoBehaviour
 
         pauseMenu.SetActive(true);
 
+        // Esconde a barra de vida
+        if (healthBarUI != null)
+            healthBarUI.SetActive(false);
+
+        // Esconde a barra de stamina
+        if (staminaBarUI != null)
+            staminaBarUI.SetActive(false);
+
         UnlockCursor();
     }
 
@@ -69,6 +81,14 @@ public class InGameController : MonoBehaviour
         Time.timeScale = 1f;
 
         pauseMenu.SetActive(false);
+
+        // Mostra a barra de vida novamente
+        if (healthBarUI != null)
+            healthBarUI.SetActive(true);
+
+        // Mostra a barra de stamina novamente
+        if (staminaBarUI != null)
+            staminaBarUI.SetActive(true);
 
         LockCursor();
 
