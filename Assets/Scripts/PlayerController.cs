@@ -1,51 +1,215 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(Rigidbody))]
 public class PlayerController : MonoBehaviour
 {
-    public float speed = 5f;
+    [Header("Movimento")]
+    public float speed = 6f;
+    public float sprintMultiplier = 1.666f;
+    public float jumpForce = 5f;
+    public float mouseSensitivity = 0.08f;
+
+    [Header("Ground Check")]
+    public LayerMask groundMask = -1;
+    public float groundDistance = 0.2f;
 
     private Rigidbody rb;
 
-    void Start()
+    private float yaw;
+
+    private Vector3 moveInput;
+
+    private bool isGrounded;
+    private bool jumpRequested;
+
+    private float currentSpeed;
+
+    void Awake()
     {
         rb = GetComponent<Rigidbody>();
+
+        // CONGELA TODAS rotações
+        rb.constraints = RigidbodyConstraints.FreezeRotation;
+
+        rb.interpolation = RigidbodyInterpolation.Interpolate;
+    }
+
+    void Start()
+    {
+        currentSpeed = speed;
+
+        yaw = transform.eulerAngles.y;
+
+        ResetPhysics();
+    }
+
+    void OnEnable()
+    {
+        ResetPhysics();
+    }
+
+    void ResetPhysics()
+    {
+        rb.linearVelocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+
+        rb.position = transform.position;
+
+        rb.rotation = Quaternion.Euler(0f, yaw, 0f);
     }
 
     void Update()
     {
-        float moveHorizontal = 0f;
-        float moveVertical = 0f;
+        if (Time.timeScale == 0f)
+            return;
 
-        // Verifica as teclas pressionadas usando o novo Input System
-        if (Keyboard.current.aKey.isPressed) moveHorizontal = -1f;
-        if (Keyboard.current.dKey.isPressed) moveHorizontal = 1f;
+        HandleMouseLook();
 
-        if (Keyboard.current.sKey.isPressed) moveVertical = -1f;
-        if (Keyboard.current.wKey.isPressed) moveVertical = 1f;
+        HandleMovementInput();
 
-        // Cria o vetor de movimento (X, Y, Z)
-        // Mantemos o Y como 0.0f para o player não "voar" ao andar
-        Vector3 movement = new Vector3(moveHorizontal, 0.0f, moveVertical);
+        HandleJumpInput();
 
-        /*
-         * ALTERAÇÃO REALIZADA:
-         * O método de movimentação foi modificado de transform.Translate para Rigidbody.MovePosition.
-         *
-         * JUSTIFICATIVA:
-         * O uso de transform.Translate move o objeto diretamente através de sua transformação,
-         * sem considerar o sistema de física da Unity. Isso pode causar problemas como o player
-         * atravessar paredes, ignorar colisões ou apresentar comportamentos inconsistentes
-         * quando interage com outros objetos que possuem Collider.
-         *
-         * Ao utilizar o Rigidbody.MovePosition, o movimento passa a ser tratado pelo sistema
-         * de física da engine, garantindo que colisões sejam respeitadas corretamente.
-         * Dessa forma, o player não atravessa objetos e o comportamento se torna mais realista
-         * e adequado às boas práticas de desenvolvimento na Unity.
-         *
-         * Essa alteração também melhora a estabilidade do movimento em diferentes taxas de
-         * frames (FPS), tornando o jogo mais consistente independentemente do desempenho da máquina.
-         */
-        rb.MovePosition(rb.position + movement * speed * Time.deltaTime);
+        HandleSprint();
+    }
+
+    void FixedUpdate()
+    {
+        if (Time.timeScale == 0f)
+            return;
+
+        RotatePlayer();
+
+        CheckGrounded();
+
+        ApplyMovement();
+
+        ApplyJump();
+    }
+
+    void RotatePlayer()
+    {
+        Quaternion rotation = Quaternion.Euler(0f, yaw, 0f);
+
+        rb.MoveRotation(rotation);
+    }
+
+    void HandleMouseLook()
+    {
+        if (Mouse.current == null)
+            return;
+
+        Vector2 mouseDelta = Mouse.current.delta.ReadValue();
+
+        yaw += mouseDelta.x * mouseSensitivity;
+    }
+
+    void HandleMovementInput()
+    {
+        moveInput = Vector3.zero;
+
+        Keyboard kb = Keyboard.current;
+
+        if (kb == null)
+            return;
+
+        if (kb.wKey.isPressed)
+            moveInput.z += 1f;
+
+        if (kb.sKey.isPressed)
+            moveInput.z -= 1f;
+
+        if (kb.aKey.isPressed)
+            moveInput.x -= 1f;
+
+        if (kb.dKey.isPressed)
+            moveInput.x += 1f;
+
+        moveInput.Normalize();
+    }
+
+    void HandleJumpInput()
+    {
+        if (Keyboard.current != null &&
+            Keyboard.current.spaceKey.wasPressedThisFrame)
+        {
+            jumpRequested = true;
+        }
+    }
+
+    void HandleSprint()
+    {
+        if (Keyboard.current != null &&
+            Keyboard.current.leftShiftKey.isPressed)
+        {
+            currentSpeed = speed * sprintMultiplier;
+        }
+        else
+        {
+            currentSpeed = speed;
+        }
+    }
+
+    void CheckGrounded()
+    {
+        Collider col = GetComponent<Collider>();
+
+        if (col == null)
+            return;
+
+        float height = col.bounds.size.y;
+
+        Vector3 feetPos =
+            transform.position - new Vector3(0, height * 0.5f, 0);
+
+        feetPos += Vector3.up * 0.05f;
+
+        float rayDistance = groundDistance + 0.3f;
+
+        isGrounded = Physics.Raycast(
+            feetPos,
+            Vector3.down,
+            rayDistance,
+            groundMask
+        );
+    }
+
+    void ApplyMovement()
+    {
+        Vector3 forward = transform.forward;
+        Vector3 right = transform.right;
+
+        forward.y = 0f;
+        right.y = 0f;
+
+        forward.Normalize();
+        right.Normalize();
+
+        Vector3 direction =
+            (forward * moveInput.z) +
+            (right * moveInput.x);
+
+        direction.Normalize();
+
+        Vector3 velocity = direction * currentSpeed;
+
+        velocity.y = rb.linearVelocity.y;
+
+        rb.linearVelocity = velocity;
+    }
+
+    void ApplyJump()
+    {
+        if (jumpRequested && isGrounded)
+        {
+            rb.linearVelocity =
+                new Vector3(
+                    rb.linearVelocity.x,
+                    jumpForce,
+                    rb.linearVelocity.z
+                );
+
+            jumpRequested = false;
+        }
     }
 }
