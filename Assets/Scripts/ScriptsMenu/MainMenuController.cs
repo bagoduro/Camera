@@ -15,7 +15,7 @@ public class MainMenuController : MonoBehaviour
     public void StartGame()
     {
         if (audioController != null)
-            audioController.TocarEfeito(16); // Confirmação (ajuste o índice se necessário)
+            audioController.TocarEfeito(6); // Confirmação (ajuste o índice se necessário)
 
         StartCoroutine(CarregarCenaDelay(1)); // 1 = índice da cena de jogo
     }
@@ -34,7 +34,7 @@ public class MainMenuController : MonoBehaviour
     public void Quit()
     {
         if (audioController != null)
-            audioController.TocarEfeito(15); // Clique (ajuste o índice)
+            audioController.TocarEfeito(16); // Clique (ajuste o índice)
 
         Application.Quit();
 

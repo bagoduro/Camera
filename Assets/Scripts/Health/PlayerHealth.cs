@@ -29,6 +29,9 @@ public class PlayerHealth : MonoBehaviour
         if (currentHealth < 0f)
             currentHealth = 0f;
 
+        // 🔥 SOM DE DANO (índice 11 - GemidoDor)
+        FindObjectOfType<AudioController>()?.TocarEfeito(11);
+
         Debug.Log($"Dano recebido: {damage}. Vida atual: {currentHealth}");
 
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
@@ -41,6 +44,9 @@ public class PlayerHealth : MonoBehaviour
 
     void Die()
     {
+        // 🔥 SOM DE MORTE DO JOGADOR (índice 14 - Morte)
+        FindObjectOfType<AudioController>()?.TocarEfeito(14);
+
         Debug.Log("Jogador morreu! Recarregando cena...");
 
         if (!useDeathScreen)

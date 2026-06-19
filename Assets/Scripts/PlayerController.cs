@@ -38,6 +38,13 @@ public class PlayerController : MonoBehaviour
             passoSource.loop = false;
             passoSource.volume = 0.5f;
         }
+
+        // 🔥 CONECTA O PASSO SOURCE AO MIXER (para o slider de efeitos funcionar)
+        AudioController audio = FindObjectOfType<AudioController>();
+        if (audio != null && audio.efeitoSource != null)
+        {
+            passoSource.outputAudioMixerGroup = audio.efeitoSource.outputAudioMixerGroup;
+        }
     }
 
     void Start()
@@ -85,7 +92,7 @@ public class PlayerController : MonoBehaviour
         {
             if (passoSource.isPlaying)
             {
-                passoSource.Stop(); // PARA IMEDIATAMENTE
+                passoSource.Stop();
             }
         }
     }

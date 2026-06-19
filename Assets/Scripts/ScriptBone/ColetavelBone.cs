@@ -7,6 +7,9 @@ public class ColetavelBone : MonoBehaviour
         // Verifica se quem entrou no gatilho é o personagem
         if (other.CompareTag("Player"))
         {
+            // 🔥 SOM DE COLETA (índice 13 - ItemPegando)
+            FindObjectOfType<AudioController>()?.TocarEfeito(13);
+
             // Tenta encontrar o script do personagem que tem o método para equipar o boné
             Personagem personagem = other.GetComponent<Personagem>();
             if (personagem != null)

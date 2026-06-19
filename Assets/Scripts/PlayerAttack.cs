@@ -3,10 +3,15 @@ using UnityEngine.InputSystem;
 
 public class PlayerAttack : MonoBehaviour
 {
+    [Header("Cooldown")]
     public float cooldown = 2f;
+
     private float timer;
     private bool canAttack = true;
-    public Sword sword;  // Referência para o script Sword
+    public Sword sword;
+
+    // 🔥 VARIÁVEL PARA ALTERNAR OS SONS
+    private bool usarSomAlternativo = false;
 
     void Start()
     {
@@ -16,6 +21,7 @@ public class PlayerAttack : MonoBehaviour
 
     void Update()
     {
+        // Cooldown
         if (!canAttack)
         {
             timer += Time.deltaTime;
@@ -26,7 +32,7 @@ public class PlayerAttack : MonoBehaviour
             }
         }
 
-        // Ataca com clique esquerdo do mouse
+        // 🔥 APENAS BOTÃO ESQUERDO PARA ATACAR
         if (Mouse.current.leftButton.wasPressedThisFrame && canAttack)
         {
             Attack();
@@ -36,12 +42,26 @@ public class PlayerAttack : MonoBehaviour
     void Attack()
     {
         canAttack = false;
+
+        // Executa a animação
         if (sword != null)
             sword.Attack();
 
-        //  SOM DE ATAQUE (índice 9 - FacaCorte)
-        FindObjectOfType<AudioController>()?.TocarEfeito(9);
+        // 🔥 ALTERNA OS SONS A CADA ATAQUE
+        if (usarSomAlternativo)
+        {
+            FindObjectOfType<AudioController>()?.TocarEfeito(10); // FacaCorte2
+            Debug.Log("Som alternativo (FacaCorte2)");
+        }
+        else
+        {
+            FindObjectOfType<AudioController>()?.TocarEfeito(9);  // FacaCorte
+            Debug.Log("Som principal (FacaCorte)");
+        }
 
-        Debug.Log("Attack performed!");
+        // Inverte para o próximo ataque
+        usarSomAlternativo = !usarSomAlternativo;
+
+        Debug.Log("Ataque realizado!");
     }
 }

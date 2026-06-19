@@ -5,7 +5,6 @@ public class EnemyDeathDamage : MonoBehaviour
     public float damage = 15f;
     public float radius = 3f;
     public ParticleSystem explosionEffect;
-    public AudioClip explosionSound;
 
     void OnDestroy()
     {
@@ -22,10 +21,11 @@ public class EnemyDeathDamage : MonoBehaviour
             Debug.Log($"Caixa explodiu e causou {damage} de dano!");
         }
 
+        // 🔥 SOM DE EXPLOSÃO (índice 8) via AudioController
+        FindObjectOfType<AudioController>()?.TocarEfeito(8);
+
         if (explosionEffect != null)
             Instantiate(explosionEffect, transform.position, Quaternion.identity);
-        if (explosionSound != null)
-            AudioSource.PlayClipAtPoint(explosionSound, transform.position);
     }
 
     void OnDrawGizmosSelected()

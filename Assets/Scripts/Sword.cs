@@ -14,7 +14,7 @@ public class Sword : MonoBehaviour
     {
         if (animator != null)
         {
-            animator.Play("AnimacaoFaca 0"); 
+            animator.Play("AnimacaoFaca 0");
         }
     }
 
@@ -22,19 +22,30 @@ public class Sword : MonoBehaviour
     {
         Debug.Log("Collidiu com " + collision.gameObject.name);
 
-        // 1. Verifica se é um INIMIGO (com sons)
+        // 1. INIMIGO
         EnemyStatus enemy = collision.gameObject.GetComponent<EnemyStatus>();
         if (enemy != null)
         {
             enemy.TakeDamage(damage);
-            return; // Sai da função para não executar o próximo
+            return;
         }
 
-        // 2. Verifica se é um OBJETO GENÉRICO (sem sons de inimigo)
+        // 2. CAIXA DO BEM
         StatusThings thing = collision.gameObject.GetComponent<StatusThings>();
         if (thing != null)
         {
             thing.TakeDamage(damage);
+            return;
         }
+
+        // 3. CAIXA EXPLOSIVA
+        ExplosiveCrate crate = collision.gameObject.GetComponent<ExplosiveCrate>();
+        if (crate != null)
+        {
+            crate.TakeDamage(damage);
+            return;
+        }
+
+        //  NADA MAIS ACONTECE! SEM SOM DE HIT, SEM DANO EM PAREDES/CHÃO.
     }
 }

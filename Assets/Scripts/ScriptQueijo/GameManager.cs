@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
 using UnityEngine.UI;
+using System.Collections; // necessário para IEnumerator
 
 public class GameManager : MonoBehaviour
 {
@@ -12,8 +13,8 @@ public class GameManager : MonoBehaviour
     private int queijosColetados = 0;
 
     [Header("UI")]
-    public TextMeshProUGUI contadorText;     // texto "Queijos: 0/3"
-    public GameObject victoryPanel;          // painel de vitória
+    public TextMeshProUGUI contadorText;
+    public GameObject victoryPanel;
     public Button restartButton;
     public Button mainMenuButton;
 
@@ -35,7 +36,7 @@ public class GameManager : MonoBehaviour
     {
         if (victoryPanel != null)
             victoryPanel.SetActive(false);
-        
+
         AtualizarContadorUI();
     }
 
@@ -48,8 +49,16 @@ public class GameManager : MonoBehaviour
 
         if (queijosColetados >= queijosNecessarios)
         {
-            Vitoria();
+            // 🔥 Toca o som de "Checado" antes da vitória
+            FindObjectOfType<AudioController>()?.TocarEfeito(1); // Checado
+            StartCoroutine(VitoriaDelay());
         }
+    }
+
+    IEnumerator VitoriaDelay()
+    {
+        yield return new WaitForSeconds(0.2f); // espera o som tocar
+        Vitoria();
     }
 
     void AtualizarContadorUI()
@@ -64,24 +73,20 @@ public class GameManager : MonoBehaviour
     {
         jogoTerminou = true;
 
-        //  SOM DE VITÓRIA (índice 2)
-        FindObjectOfType<AudioController>()?.TocarEfeito(2);
+        FindObjectOfType<AudioController>()?.TocarEfeito(2); // Vitória
 
-        Time.timeScale = 0f;  // pausa o jogo
+        Time.timeScale = 0f;
 
         if (victoryPanel != null)
             victoryPanel.SetActive(true);
 
-        // Esconde o menu de pause se estiver ativo (evita conflito)
         InGameController igc = FindObjectOfType<InGameController>();
         if (igc != null && igc.pauseMenu != null)
             igc.pauseMenu.SetActive(false);
 
-        // Libera o cursor
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-        // Configura botões
         if (restartButton != null)
             restartButton.onClick.AddListener(RestartGame);
         if (mainMenuButton != null)
@@ -97,6 +102,6 @@ public class GameManager : MonoBehaviour
     void GoToMainMenu()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene(0); // cena do menu principal
+        SceneManager.LoadScene(0);
     }
 }
