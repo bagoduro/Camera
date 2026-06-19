@@ -38,6 +38,10 @@ public class PlayerAttack : MonoBehaviour
         canAttack = false;
         if (sword != null)
             sword.Attack();
+
+        //  SOM DE ATAQUE (índice 9 - FacaCorte)
+        FindObjectOfType<AudioController>()?.TocarEfeito(9);
+
         Debug.Log("Attack performed!");
     }
 }

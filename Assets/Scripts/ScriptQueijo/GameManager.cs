@@ -63,6 +63,10 @@ public class GameManager : MonoBehaviour
     void Vitoria()
     {
         jogoTerminou = true;
+
+        //  SOM DE VITÓRIA (índice 2)
+        FindObjectOfType<AudioController>()?.TocarEfeito(2);
+
         Time.timeScale = 0f;  // pausa o jogo
 
         if (victoryPanel != null)

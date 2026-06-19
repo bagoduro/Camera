@@ -44,6 +44,9 @@ public class DeathScreenManager : MonoBehaviour
 
     private void ShowDeathScreen()
     {
+        // 🔥 SOM DE DERROTA (índice 5)
+        FindObjectOfType<AudioController>()?.TocarEfeito(5);
+
         Time.timeScale = 0f;
 
         if (deathScreenPanel != null)

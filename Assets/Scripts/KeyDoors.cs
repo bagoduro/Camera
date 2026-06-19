@@ -8,6 +8,9 @@ public class KeyDoors : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
+            // 🔥 SOM DE ABRIR PORTA (índice 18)
+            FindObjectOfType<AudioController>()?.TocarEfeito(18);
+
             Destroy(targetDoor);
             Destroy(this.gameObject);
         }
