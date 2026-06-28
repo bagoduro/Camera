@@ -15,7 +15,7 @@ public class PlayerController : MonoBehaviour
     public float groundDistance = 0.2f;
 
     [Header("Áudio de Passos")]
-    public AudioSource passoSource; // Arraste um Audio Source aqui, ou deixe vazio que ele cria automático
+    public AudioSource passoSource;
 
     private Rigidbody rb;
     private float yaw;
@@ -30,7 +30,6 @@ public class PlayerController : MonoBehaviour
         rb.constraints = RigidbodyConstraints.FreezeRotation;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
 
-        // Cria o AudioSource para passos se não foi atribuído
         if (passoSource == null)
         {
             passoSource = gameObject.AddComponent<AudioSource>();
@@ -39,7 +38,6 @@ public class PlayerController : MonoBehaviour
             passoSource.volume = 0.5f;
         }
 
-        // 🔥 CONECTA O PASSO SOURCE AO MIXER (para o slider de efeitos funcionar)
         AudioController audio = FindObjectOfType<AudioController>();
         if (audio != null && audio.efeitoSource != null)
         {
@@ -51,6 +49,7 @@ public class PlayerController : MonoBehaviour
     {
         currentSpeed = speed;
         yaw = transform.eulerAngles.y;
+        Cursor.lockState = CursorLockMode.Locked;
         ResetPhysics();
     }
 
@@ -73,7 +72,7 @@ public class PlayerController : MonoBehaviour
         HandleJumpInput();
         HandleSprint();
 
-        // 🔥 SONS DE PASSOS (com controle Play/Stop)
+        // 🔥 SONS DE PASSOS
         float velocidadeHorizontal = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z).magnitude;
 
         if (isGrounded && velocidadeHorizontal > 0.1f)
@@ -91,9 +90,7 @@ public class PlayerController : MonoBehaviour
         else
         {
             if (passoSource.isPlaying)
-            {
                 passoSource.Stop();
-            }
         }
     }
 
@@ -107,17 +104,16 @@ public class PlayerController : MonoBehaviour
         ApplyJump();
     }
 
-    void RotatePlayer()
-    {
-        Quaternion rotation = Quaternion.Euler(0f, yaw, 0f);
-        rb.MoveRotation(rotation);
-    }
-
     void HandleMouseLook()
     {
         if (Mouse.current == null) return;
-        Vector2 mouseDelta = Mouse.current.delta.ReadValue();
-        yaw += mouseDelta.x * mouseSensitivity;
+        float mouseX = Mouse.current.delta.x.ReadValue();
+        yaw += mouseX * mouseSensitivity;
+    }
+
+    void RotatePlayer()
+    {
+        rb.MoveRotation(Quaternion.Euler(0f, yaw, 0f));
     }
 
     void HandleMovementInput()
@@ -136,9 +132,7 @@ public class PlayerController : MonoBehaviour
     void HandleJumpInput()
     {
         if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
-        {
             jumpRequested = true;
-        }
     }
 
     void HandleSprint()
