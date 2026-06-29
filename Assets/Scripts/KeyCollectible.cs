@@ -18,7 +18,6 @@ public class KeyCollectible : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             collected = true;
-
             StartCoroutine(OpenDoorSequence());
         }
     }
@@ -28,20 +27,21 @@ public class KeyCollectible : MonoBehaviour
         // Som da chave sendo coletada (índice 3)
         FindObjectOfType<AudioController>()?.TocarEfeito(3);
 
-        // Pequena pausa para o jogador perceber que pegou a chave
         yield return new WaitForSeconds(0.2f);
 
         // Som da fechadura destravando (índice 7)
         FindObjectOfType<AudioController>()?.TocarEfeito(7);
 
-        // Espera o som começar
         yield return new WaitForSeconds(unlockDelay);
+
+        // Som de abrir porta (índice 18)
+        FindObjectOfType<AudioController>()?.TocarEfeito(18);
+
+        yield return new WaitForSeconds(0.5f);
 
         // Remove a porta
         if (doorToOpen != null)
-        {
             Destroy(doorToOpen);
-        }
 
         // Remove a chave
         Destroy(gameObject);
