@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
 using UnityEngine.UI;
-using System.Collections; // necessário para IEnumerator
+using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
@@ -12,32 +12,67 @@ public class GameManager : MonoBehaviour
     public int queijosNecessarios = 3;
     private int queijosColetados = 0;
 
+    [Header("Timer")]
+    public float tempoLimite = 180f; // 3 minutos
+    private float tempoRestante;
+    private bool timerAtivo = true;
+
     [Header("UI")]
     public TextMeshProUGUI contadorText;
+    public TextMeshProUGUI timerText;
     public GameObject victoryPanel;
+    public GameObject defeatPanel;
+    public TextMeshProUGUI defeatTitleText; // Arraste o TextMeshPro "Death" aqui
     public Button restartButton;
     public Button mainMenuButton;
+    public Button restartButtonDerrota;
+    public Button mainMenuButtonDerrota;
+
+    [Header("Recorde")]
+    public TextMeshProUGUI recordeText;
+    public TextMeshProUGUI recordeAtualText;
+
+    [Header("Cores do Timer")]
+    public Color corNormal = Color.white;
+    public Color corAviso = Color.yellow;   // abaixo de 60s
+    public Color corPerigo = Color.red;     // abaixo de 30s
 
     private bool jogoTerminou = false;
 
     void Awake()
     {
         if (Instance == null)
-        {
             Instance = this;
-        }
         else
-        {
             Destroy(gameObject);
-        }
     }
 
     void Start()
     {
-        if (victoryPanel != null)
-            victoryPanel.SetActive(false);
+        tempoRestante = tempoLimite;
+
+        if (victoryPanel != null) victoryPanel.SetActive(false);
+        if (defeatPanel != null) defeatPanel.SetActive(false);
 
         AtualizarContadorUI();
+        AtualizarTimerUI();
+    }
+
+    void Update()
+    {
+        if (jogoTerminou || !timerAtivo) return;
+
+        tempoRestante -= Time.deltaTime;
+
+        if (tempoRestante <= 0f)
+        {
+            tempoRestante = 0f;
+            AtualizarTimerUI();
+            Derrota();
+            return;
+        }
+
+        AtualizarTimerUI();
     }
 
     public void ColetarQueijo()
@@ -49,36 +84,78 @@ public class GameManager : MonoBehaviour
 
         if (queijosColetados >= queijosNecessarios)
         {
-            // 🔥 Toca o som de "Checado" antes da vitória
-            FindObjectOfType<AudioController>()?.TocarEfeito(1); // Checado
+            FindObjectOfType<AudioController>()?.TocarEfeito(1);
             StartCoroutine(VitoriaDelay());
         }
     }
 
     IEnumerator VitoriaDelay()
     {
-        yield return new WaitForSeconds(0.2f); // espera o som tocar
+        yield return new WaitForSeconds(0.2f);
         Vitoria();
     }
 
     void AtualizarContadorUI()
     {
         if (contadorText != null)
-        {
             contadorText.text = $"Queijos: {queijosColetados}/{queijosNecessarios}";
-        }
+    }
+
+    void AtualizarTimerUI()
+    {
+        if (timerText == null) return;
+
+        int minutos = Mathf.FloorToInt(tempoRestante / 60f);
+        int segundos = Mathf.FloorToInt(tempoRestante % 60f);
+        timerText.text = $"{minutos:00}:{segundos:00}";
+
+        if (tempoRestante <= 30f)
+            timerText.color = corPerigo;
+        else if (tempoRestante <= 60f)
+            timerText.color = corAviso;
+        else
+            timerText.color = corNormal;
     }
 
     void Vitoria()
     {
         jogoTerminou = true;
+        timerAtivo = false;
 
-        FindObjectOfType<AudioController>()?.TocarEfeito(2); // Vitória
+        float tempoUsado = tempoLimite - tempoRestante;
+
+        float melhorTempo = PlayerPrefs.GetFloat("MelhorTempo", float.MaxValue);
+        bool novoRecorde = tempoUsado < melhorTempo;
+
+        if (novoRecorde)
+        {
+            PlayerPrefs.SetFloat("MelhorTempo", tempoUsado);
+            PlayerPrefs.Save();
+            melhorTempo = tempoUsado;
+        }
+
+        FindObjectOfType<AudioController>()?.TocarEfeito(2);
 
         Time.timeScale = 0f;
 
         if (victoryPanel != null)
             victoryPanel.SetActive(true);
+
+        if (recordeAtualText != null)
+        {
+            int min = Mathf.FloorToInt(tempoUsado / 60f);
+            int seg = Mathf.FloorToInt(tempoUsado % 60f);
+            recordeAtualText.text = novoRecorde
+                ? $"Novo Recorde: {min:00}:{seg:00}! "
+                : $"Seu tempo: {min:00}:{seg:00}";
+        }
+
+        if (recordeText != null)
+        {
+            int min = Mathf.FloorToInt(melhorTempo / 60f);
+            int seg = Mathf.FloorToInt(melhorTempo % 60f);
+            recordeText.text = $"Recorde: {min:00}:{seg:00}";
+        }
 
         InGameController igc = FindObjectOfType<InGameController>();
         if (igc != null && igc.pauseMenu != null)
@@ -91,6 +168,32 @@ public class GameManager : MonoBehaviour
             restartButton.onClick.AddListener(RestartGame);
         if (mainMenuButton != null)
             mainMenuButton.onClick.AddListener(GoToMainMenu);
+    }
+
+    void Derrota()
+    {
+        jogoTerminou = true;
+        timerAtivo = false;
+
+        // Troca o texto para "Tempo Esgotado!"
+        if (defeatTitleText != null)
+            defeatTitleText.text = "Tempo Esgotado!";
+
+        // Som de falha por tempo (índice 20)
+        FindObjectOfType<AudioController>()?.TocarEfeito(20);
+
+        Time.timeScale = 0f;
+
+        if (defeatPanel != null)
+            defeatPanel.SetActive(true);
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+        if (restartButtonDerrota != null)
+            restartButtonDerrota.onClick.AddListener(RestartGame);
+        if (mainMenuButtonDerrota != null)
+            mainMenuButtonDerrota.onClick.AddListener(GoToMainMenu);
     }
 
     void RestartGame()
