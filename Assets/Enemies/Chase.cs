@@ -1,34 +1,48 @@
 using UnityEngine;
-using UnityEngine.AI; // Necessário para o NavMeshAgent
+using UnityEngine.AI;
 
 public class Chase : MonoBehaviour
 {
     private GameObject player;
     private NavMeshAgent agent;
 
+    [Header("Detecção")]
+    public float distanciaDeteccao = 30f; // Distância para começar a perseguir
+
     void Start()
     {
-        // Encontra o objeto com a tag "Player"
         player = GameObject.FindGameObjectWithTag("Player");
-        
-        // Obtém o componente NavMeshAgent anexado ao mesmo GameObject
         agent = GetComponent<NavMeshAgent>();
 
-        // Opcional: verificar se encontrou o player e o agent
         if (player == null)
             Debug.LogError("Nenhum objeto com a tag 'Player' foi encontrado na cena!");
-        
+
         if (agent == null)
             Debug.LogError("O componente NavMeshAgent está faltando neste GameObject!");
     }
 
     void Update()
     {
-        // Se o player ou o agent forem nulos, não faz nada
-        if (player == null || agent == null)
-            return;
+        if (player == null || agent == null) return;
 
-        // Define a posição do player como destino do NavMeshAgent
-        agent.SetDestination(player.transform.position);
+        float distancia = Vector3.Distance(transform.position, player.transform.position);
+
+        if (distancia <= distanciaDeteccao)
+        {
+            // Player dentro do alcance — perseguir
+            agent.SetDestination(player.transform.position);
+        }
+        else
+        {
+            // Player fora do alcance — parar
+            agent.ResetPath();
+        }
+    }
+
+    // Desenha o raio de detecção no Editor para facilitar ajuste
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, distanciaDeteccao);
     }
 }
