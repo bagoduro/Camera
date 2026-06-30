@@ -42,6 +42,22 @@ public class PlayerHealth : MonoBehaviour
         }
     }
 
+    // 🔥 NOVO: Cura o jogador (usado pelo Flask de Fúria)
+    public void Heal(float amount)
+    {
+        if (currentHealth <= 0f)
+            return;
+
+        currentHealth += amount;
+
+        if (currentHealth > maxHealth)
+            currentHealth = maxHealth;
+
+        Debug.Log($"Curou {amount}. Vida atual: {currentHealth}");
+
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
+    }
+
     void Die()
     {
         // 🔥 SOM DE MORTE DO JOGADOR (índice 14 - Morte)

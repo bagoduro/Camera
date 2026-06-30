@@ -4,10 +4,12 @@ public class Sword : MonoBehaviour
 {
     public float damage = 10f;
     private Animator animator;
+    private PlayerFlask playerFlask;
 
     void Start()
     {
         animator = GetComponent<Animator>();
+        playerFlask = GetComponentInParent<PlayerFlask>();
     }
 
     public void Attack()
@@ -27,6 +29,9 @@ public class Sword : MonoBehaviour
         if (enemy != null)
         {
             enemy.TakeDamage(damage);
+
+            // 🔥 FLASK: cura o player se o efeito de fúria estiver ativo
+            playerFlask?.OnAcertarInimigo();
             return;
         }
 
@@ -46,6 +51,6 @@ public class Sword : MonoBehaviour
             return;
         }
 
-        //  NADA MAIS ACONTECE! SEM SOM DE HIT, SEM DANO EM PAREDES/CHÃO.
+        // NADA MAIS ACONTECE! SEM SOM DE HIT, SEM DANO EM PAREDES/CHÃO.
     }
 }
