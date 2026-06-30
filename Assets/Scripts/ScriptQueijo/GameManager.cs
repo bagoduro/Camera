@@ -17,6 +17,12 @@ public class GameManager : MonoBehaviour
     private float tempoRestante;
     private bool timerAtivo = true;
 
+    [Header("Tic-Tac de Alerta")]
+    public AudioClip ticTacClip;
+    public float tempoAlerta = 10f; // segundos finais para tocar o tic-tac
+    private AudioSource ticTacSource;
+    private bool ticTacIniciado = false;
+
     [Header("UI")]
     public TextMeshProUGUI contadorText;
     public TextMeshProUGUI timerText;
@@ -54,6 +60,13 @@ public class GameManager : MonoBehaviour
         if (victoryPanel != null) victoryPanel.SetActive(false);
         if (defeatPanel != null) defeatPanel.SetActive(false);
 
+        // Cria o AudioSource para o tic-tac
+        ticTacSource = gameObject.AddComponent<AudioSource>();
+        ticTacSource.clip = ticTacClip;
+        ticTacSource.loop = true;
+        ticTacSource.playOnAwake = false;
+        ticTacSource.volume = 0.6f;
+
         AtualizarContadorUI();
         AtualizarTimerUI();
     }
@@ -64,15 +77,30 @@ public class GameManager : MonoBehaviour
 
         tempoRestante -= Time.deltaTime;
 
+        // Inicia o tic-tac nos últimos segundos
+        if (!ticTacIniciado && tempoRestante <= tempoAlerta && tempoRestante > 0f)
+        {
+            ticTacIniciado = true;
+            if (ticTacSource != null && ticTacClip != null)
+                ticTacSource.Play();
+        }
+
         if (tempoRestante <= 0f)
         {
             tempoRestante = 0f;
             AtualizarTimerUI();
+            PararTicTac();
             Derrota();
             return;
         }
 
         AtualizarTimerUI();
+    }
+
+    void PararTicTac()
+    {
+        if (ticTacSource != null && ticTacSource.isPlaying)
+            ticTacSource.Stop();
     }
 
     public void ColetarQueijo()
@@ -121,6 +149,8 @@ public class GameManager : MonoBehaviour
     {
         jogoTerminou = true;
         timerAtivo = false;
+
+        PararTicTac();
 
         float tempoUsado = tempoLimite - tempoRestante;
 

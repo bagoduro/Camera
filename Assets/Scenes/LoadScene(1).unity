@@ -10686,6 +10686,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: b9da788aff3e1d642ba44d23338930ba, type: 3}
   - {fileID: 8300000, guid: f9e8bbf9fd081364ab5f3d6b453c7361, type: 3}
   - {fileID: 8300000, guid: 1971a200be22366499f4f91dd02e8eee, type: 3}
+  - {fileID: 8300000, guid: a58b29f75af7a4c4da1f99226be3d5c7, type: 3}
   mixer: {fileID: 24100000, guid: 98bfca5abbe5a1f42bc23c7eb6b26345, type: 2}
   sliderMusica: {fileID: 1170651959}
   sliderEfeitos: {fileID: 1449455837}
@@ -11560,6 +11561,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   queijosNecessarios: 3
   tempoLimite: 90
+  ticTacClip: {fileID: 8300000, guid: ffdd52b3ec0e61b40a3c259d0cc623b3, type: 3}
+  tempoAlerta: 10
   contadorText: {fileID: 1282994247}
   timerText: {fileID: 1991904823}
   victoryPanel: {fileID: 1281123506}
