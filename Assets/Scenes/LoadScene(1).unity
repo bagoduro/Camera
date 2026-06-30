@@ -685,6 +685,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5bef831bd9ffba749b16fd9133686c90, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2120312159}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5bef831bd9ffba749b16fd9133686c90, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2120312162}
   m_SourcePrefab: {fileID: 100100000, guid: 5bef831bd9ffba749b16fd9133686c90, type: 3}
 --- !u!1 &89964966
 GameObject:
@@ -1908,6 +1911,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e84aaab08e424464fa96fd0f305057d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StatusThings
+--- !u!114 &260678745
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 260678736}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec5517106b7828344a203f765bddf11f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CaixaSpawn
+  inimigoPrefab: {fileID: 2108812254}
+  quantidadeInimigos: 2
+  raioSpawn: 20
 --- !u!1001 &273031467
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3353,6 +3371,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5bef831bd9ffba749b16fd9133686c90, type: 3}
       insertIndex: -1
       addedObject: {fileID: 260678742}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5bef831bd9ffba749b16fd9133686c90, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 260678745}
   m_SourcePrefab: {fileID: 100100000, guid: 5bef831bd9ffba749b16fd9133686c90, type: 3}
 --- !u!1001 &493588683
 PrefabInstance:
@@ -6029,7 +6050,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CaixaSpawn
   inimigoPrefab: {fileID: 2108812254}
   quantidadeInimigos: 2
-  raioSpawn: 30
+  raioSpawn: 20
 --- !u!1 &1026907607
 GameObject:
   m_ObjectHideFlags: 0
@@ -12418,6 +12439,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e84aaab08e424464fa96fd0f305057d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StatusThings
+--- !u!114 &2120312162
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2120312153}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec5517106b7828344a203f765bddf11f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CaixaSpawn
+  inimigoPrefab: {fileID: 2108812254}
+  quantidadeInimigos: 2
+  raioSpawn: 20
 --- !u!1 &2131064139
 GameObject:
   m_ObjectHideFlags: 0
@@ -12430,7 +12466,6 @@ GameObject:
   - component: {fileID: 2131064142}
   - component: {fileID: 2131064141}
   - component: {fileID: 2131064144}
-  - component: {fileID: 2131064145}
   m_Layer: 0
   m_Name: Porta com Chave
   m_TagString: Untagged
@@ -12531,18 +12566,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0, y: 1.0000001, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &2131064145
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2131064139}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8110e0fea6b512841841769d5b72381c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::KeyDoors
 --- !u!1 &2132497871 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 16626651375b1b943bab6d6879c5ceba, type: 3}
